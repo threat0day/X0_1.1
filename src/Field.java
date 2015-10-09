@@ -1,3 +1,4 @@
+import java.util.Random;
 import java.util.Scanner;
 
 public class Field {
@@ -10,7 +11,7 @@ public class Field {
     public char[] turn=new char[]{'X'};
     public char[] turnX0=new char[1];
     public int counter=0;
-
+    public int firstTurn=0;
 
    Field(){//конструктор, заполняем поле цифрами
        String bufString=new String();
@@ -39,7 +40,7 @@ public class Field {
             PlayerTurn();
         }
         if ((turn[0]=='0')&&GameOver==0){
-            CompTurn();
+            IITurn();
         }
     }
     public void PlayerTurn(){
@@ -49,12 +50,12 @@ public class Field {
                     fieldArray[i][j]='X';
                     GameProcess();
                     turn[0]='0';
-                    System.out.println("Log: PlayerTurn");
+                   // System.out.println("Log: PlayerTurn");
                 }
             }
         }
     }
-    public void CompTurn(){
+    /*public void CompTurn(){
         for (int i=0;i<fieldArray.length;i++){
             for (int j=0;j<fieldArray.length;j++){
                 if ((fieldArray[i][j]==turnX0[0])&&(fieldArray[i][j]!='X')&&(fieldArray[i][j]!='0')){
@@ -65,8 +66,27 @@ public class Field {
                 }
             }
         }
-    }
+    }*/
 
+    public void IITurn(){
+        IITurn iiTurn=new IITurn();
+        int turnOK=0;
+        Random random=new Random();
+        if ((firstTurn==0)&&(fieldArray[1][1]!='X')){
+            fieldArray[1][1]='0';
+            turnOK=1;
+            firstTurn=1;
+        }
+        if ((firstTurn!=0)&&(turnOK==0)){
+            iiTurn.turnComputer(firstTurn,fieldArray);
+            turnOK=1;
+        }
+        if (firstTurn==0){
+            iiTurn.FirstCompTurn(fieldArray);
+        }
+        GameProcess();
+        turn[0]='X';
+    }
 
     public void GameProcess(){
         DefineWinner defineWinner =new DefineWinner();
@@ -76,19 +96,23 @@ public class Field {
             System.out.println("------------------");
             System.out.println("Standoff");
             Standoff=true;
+            GameOver=1;
         }
 
         if (defineWinner.Gorizont(fieldArray,turn)==3){
             System.out.println("Gorizont Winer "+turn[0]);
             GameOver=1;
+            ReferField();
         }
         if (defineWinner.DiagonalLeft(fieldArray, turn)==3){
             System.out.println("Left Winer "+turn[0]);
             GameOver=1;
+            ReferField();
         }
         if (defineWinner.DiagonalRight(fieldArray, turn,SIZE_DEFAULT)==3){
             System.out.println("Right Winer "+turn[0]);
             GameOver=1;
+            ReferField();
         }
         //примерно тут можно вызвать конструктор для перезапуска игры.
     }
